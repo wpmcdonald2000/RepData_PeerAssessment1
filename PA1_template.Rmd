@@ -7,21 +7,21 @@ Load Data located in forked repository
 ```{r Reading Activity Data}
 activity <- read.csv("activity.csv")
 # Check data and variable types
-summary(activity)
 str(activity)
+summary(activity$steps, digits = 5)
 ```
 
 Aggregate data for analysis as Steps taken per day and check output
 
 ```{r Aggregate steps per day}
 steps_day <- aggregate(steps~date, activity, sum)
-head(steps_day)
-summary(steps_day)
+steps_day[1:3,]
+summary(steps_day$steps, digits = 5)
 ```
 
 ## What is mean total number of steps taken per day?
 Plot histogram of steps per day
-```{r}
+```{r Histogram}
 library(ggplot2)
 ggplot(steps_day, aes(x=steps)) + geom_histogram() + ggtitle("Steps_Day Dataset")
 ```
@@ -46,7 +46,7 @@ Aggregate data for analysis of steps taken per daily time interval and check out
 ```{r Aggregate steps per interval}
 steps_interval <- aggregate(steps~interval, activity, mean)
 head(steps_interval)
-summary(steps_interval)
+summary(steps_interval$steps)
 ```
 
 Plot time series of steps taken per interval over total time frame
@@ -90,7 +90,7 @@ Create a new daily sum on imputed dataset.
 activity.imputed.daily <- aggregate(steps~date, activity.imputed, sum)
 
 # Summarize the new dataset
-summary(activity.imputed.daily)
+summary(activity.imputed.daily$steps, digits = 5)
 ```
 
 Plot the new imputed dataset as a histogram
@@ -123,10 +123,10 @@ Aggregate the imputed data on the daily interval and weekend/weekday variables
 ```{r Aggregate}
 #Aggregate imputed dataset steps on daily interval broken into weekday v. weekend
 newsteps.agg <- aggregate(steps~interval + WD, activity.imputed, mean)
-
+str(newsteps.agg)
 ```
 
-Create the time series panel plot comparing steps taken per interval on weekends 
+Create a time series panel plot comparing steps taken per interval on weekends 
 versus weekdays.
 
 ```{r time series panel plot}
@@ -134,4 +134,19 @@ library(lattice)
 xyplot(newsteps.agg$steps ~ newsteps.agg$interval|newsteps.agg$WD,type="l",ylab="Mean", xlab="Interval",layout=c(1,2))
 ```
 
-Comparison ...
+Summary comparisons:
+```{r}
+#Weekday steps summary
+summary(newsteps.agg[newsteps.agg$WD == "weekday",3 ])
+
+#Weekend steps summary
+summary(newsteps.agg[newsteps.agg$WD == "weekend",3 ])
+
+```
+
+* Weekend mean and median number of steps per daily interval are greater compared 
+to the same statistics during weekdays. 
+* Maximum steps per interval are 37% greater during weekdays.
+* Weekend steps per interval start later and seem to end later as compared to the
+weekdays. 
+
