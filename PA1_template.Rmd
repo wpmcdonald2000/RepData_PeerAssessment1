@@ -2,16 +2,66 @@
 
 
 ## Loading and preprocessing the data
+Load Data located in forked repository
 
+```{r Reading Activity Data}
+activity <- read.csv("activity.csv")
+# Check data and variable types
+summary(activity)
+str(activity)
+```
+
+Aggregate data for analysis as Steps taken per day and check output
+
+```{r Aggregate steps per day}
+steps_day <- aggregate(steps~date, activity, sum)
+head(steps_day)
+summary(steps_day)
+```
+
+Aggregate data for analysis of steps taken per daily time interval and check output
+
+```{r Aggregate steps per interval}
+steps_interval <- aggregate(steps~interval, activity, mean)
+summary(steps_interval)
+```
 
 
 ## What is mean total number of steps taken per day?
+plot histogram of steps per day
+```{r}
+library(ggplot2)
+ggplot(steps_day, aes(x=steps)) + geom_histogram()
+```
 
+Find the mean of the total daily steps.
 
+```{r}
+mean(steps_day$steps, na.rm = TRUE)
+```
+
+Find the median of the total daily steps
+
+```{r}
+median(steps_day$steps, na.rm = TRUE)
+```
+These values agree with the Summary statistics of the steps_day aggregate from above.
 
 ## What is the average daily activity pattern?
 
+plot time series of steps taken per interval over total time frame
+```{r}
+plot(steps_interval$steps~steps_interval$interval, type = "l")
+```
 
+Find the time interval which contains the maximum number of steps, on average
+
+```{r}
+maxInterval <- steps_interval[steps_interval$steps == max(steps_interval$steps),]
+maxInterval
+```
+The 5 minute interval with the most steps over the time frame studied 
+appears to be at 8:35 in the morning
 
 ## Imputing missing values
 
